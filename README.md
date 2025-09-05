@@ -18,37 +18,180 @@ This project is designed to help developers create more sophisticated AI systems
 - **Performance Optimized**: Features embedding caching and efficient numpy operations for fast similarity matching.
 - **Thoroughly Tested**: Includes a comprehensive test suite with pytest, ensuring reliability and correctness.
 
+## Diagram Files
+
+### 1. Architecture Diagram (`architecture_simple.puml`)
+
+**Purpose**: Shows the simple system architecture and component relationships.
+![architecture.puml](diagrams/architecture_simple.png)
+
+### 1. Application Architecture Diagram (`architecture.puml`)
+
+**Purpose**: Shows the overall application architecture and component relationships.
+![architecture.puml](diagrams/System_Prompt_Router_Architecture.png)
+
 ## 📦 Installation
 
-To install System Prompt Router, you can use pip:
+### Prerequisites
+
+- Python 3.8 or higher
+- OpenAI API key
+- [uv](https://docs.astral.sh/uv/) (recommended) or pip
+
+## 🚀 Installation Methods
+
+### Method 1: Install with uv (Recommended)
+
+**uv** is a fast Python package manager that provides better dependency resolution and faster installs.
+
+#### Install uv first (if not already installed):
+```bash
+# macOS/Linux
+curl -LsSf https://astral.sh/uv/install.sh | sh
+
+# Windows
+powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
+
+# Or with pip
+pip install uv
+```
+
+#### Quick Install from Source:
+```bash
+# Extract the project (if you have the tarball)
+tar -xzf system-prompt-router.tar.gz
+cd system-prompt-router
+
+# Install with console scripts enabled
+uv pip install -e .
+
+# Set up environment variables
+cp .env.example .env
+# Edit .env and add your OPENAI_API_KEY
+```
+
+#### Install as Global CLI Tool:
+```bash
+# Install globally using uv tool (makes commands available system-wide)
+uv tool install ./system-prompt-router
+
+# Now you can use the commands anywhere:
+spr --help
+system-prompt-router --help
+```
+
+#### Development Install with uv:
+```bash
+# Create development environment
+uv venv --python 3.11
+source .venv/bin/activate  # Linux/Mac
+# .venv\Scripts\activate  # Windows
+
+# Install in editable mode with dev dependencies
+uv pip install -e ".[dev]"
+
+# Or install dependencies separately
+uv pip install -e .
+uv pip install pytest pytest-cov pytest-mock black flake8 mypy
+```
+
+### Method 2: Traditional pip Install
+
+#### From Source:
+```bash
+# Extract and navigate to project
+tar -xzf system-prompt-router.tar.gz
+cd system-prompt-router
+
+# Create virtual environment
+python -m venv .venv
+source .venv/bin/activate  # Linux/Mac
+# .venv\Scripts\activate  # Windows
+
+# Install with console scripts
+pip install -e .
+
+# Set up environment variables
+cp .env.example .env
+# Edit .env and add your OPENAI_API_KEY
+```
+
+#### Development Install with pip:
+```bash
+# Install with development dependencies
+pip install -e ".[dev]"
+
+# Or install dependencies separately
+pip install -e .
+pip install pytest pytest-cov pytest-mock black flake8 mypy
+```
+
+### Method 3: Install from PyPI (Future)
+
+Once published to PyPI, you'll be able to install with:
 
 ```bash
+# With uv
+uv pip install system-prompt-router
+
+# With pip
 pip install system-prompt-router
 ```
 
-Alternatively, you can install from source for the latest updates:
+## 🎯 Verify Installation
+
+After installation, verify that the console scripts are working:
 
 ```bash
-git clone https://github.com/your-username/system-prompt-router.git
-cd system-prompt-router
-pip install -e .
+# Test the CLI commands (both should work)
+spr --help
+system-prompt-router --help
+
+# List available prompts
+spr list-prompts
+
+# Validate setup
+spr validate
+
+# Test Python import
+python -c "from system_prompt_router import SystemPromptRouter; print('✅ Installation successful!')"
 ```
 
-## 🎯 Quick Start
+## ⚙️ Environment Setup
 
-### 1. Set Up Your Environment
+### 1. Set Up Your Environment Variables
 
-Before you begin, you need to set up your OpenAI API key. You can do this by creating a `.env` file in your project root:
+Create a `.env` file from the example:
 
 ```bash
 cp .env.example .env
 ```
 
-Then, edit the `.env` file and add your OpenAI API key:
+Edit the `.env` file and add your OpenAI API key:
 
-```
+```env
 OPENAI_API_KEY=your_openai_api_key_here
+OPENAI_MODEL=gpt-3.5-turbo
+EMBEDDING_MODEL=all-MiniLM-L6-v2
+SIMILARITY_THRESHOLD=0.5
+TOP_K_RESULTS=3
 ```
+
+### 2. Test the Installation
+
+```bash
+# Run basic tests
+python test_basic.py  # If available
+
+# Run the full test suite
+pytest tests/
+
+# Test CLI functionality
+spr query "Help me write Python code"
+spr query --interactive
+```
+
+## 🎯 Quick Start
 
 ### 2. Basic Usage (Python)
 
@@ -84,7 +227,33 @@ print(f"\nMatched Prompt: {response_data["matched_prompt"]}")
 
 ### 3. Command-Line Interface (CLI)
 
-The CLI provides a powerful way to interact with the router. Here are some common commands:
+The System Prompt Router includes powerful console scripts that are automatically installed during setup. After installation, you can use either command:
+
+- `spr` - Short alias for quick commands
+- `system-prompt-router` - Full command name for scripts/documentation
+
+Both commands provide identical functionality and are available system-wide after installation.
+
+#### Available CLI Commands
+
+```bash
+# Show help and available commands
+spr --help
+system-prompt-router --help
+
+# List all available prompts
+spr list-prompts
+
+# Validate your setup and configuration
+spr validate
+
+# Show detailed statistics
+spr stats
+
+# Process queries and batch operations
+spr query [OPTIONS] [QUERY]
+spr batch [OPTIONS] INPUT_FILE
+```
 
 #### Interactive Mode
 
@@ -94,22 +263,21 @@ Start an interactive session to process queries in real-time:
 spr query --interactive
 ```
 
-Inside interactive mode, you can use commands like `/list`, `/stats`, and `/help`.
+Inside interactive mode, you can use commands like:
+- `/list` - Show available prompts
+- `/stats` - Display router statistics  
+- `/help` - Show help information
+- `/quit` - Exit interactive mode
 
-#### Single Query
+#### Single Query Processing
 
 Process a single query directly from the command line:
 
 ```bash
 spr query "Write a function to calculate Fibonacci numbers."
-```
 
-#### List Available Prompts
-
-List all available prompts in the library:
-
-```bash
-spr list-prompts
+# With custom options
+spr query "Analyze this data" --top-k 5 --method cosine
 ```
 
 #### Batch Processing
@@ -117,12 +285,31 @@ spr list-prompts
 Process multiple queries from a file and save the results:
 
 ```bash
-# Create a file with one query per line (e.g., queries.txt)
+# Create a file with one query per line
 echo "What is the capital of France?" > queries.txt
 echo "Summarize the plot of Hamlet." >> queries.txt
+echo "Write a Python sorting function." >> queries.txt
 
-# Run batch processing
+# Run batch processing with different output formats
 spr batch queries.txt --output results.json --format json
+spr batch queries.txt --output results.csv --format csv
+spr batch queries.txt --output results.txt --format txt
+```
+
+#### Configuration and Management
+
+```bash
+# Validate your setup (checks API keys, models, prompts)
+spr validate
+
+# Show detailed statistics about your router
+spr stats
+
+# Use custom prompt library
+spr query "Help me code" --prompt-library /path/to/custom_prompts.json
+
+# Use custom configuration file
+spr --config /path/to/config.yaml query "Your question"
 ```
 
 ## 📚 Prompt Library
@@ -257,6 +444,3 @@ If you have any questions or encounter any issues, please:
 1.  Check the examples in the `examples/` directory.
 2.  Review the CLI help: `spr --help`.
 3.  Open an issue on GitHub.
-
-
-
