@@ -1,0 +1,33 @@
+@startuml
+title System Prompt Router Architecture
+
+package "User Interface" {
+    [CLI] as cli
+}
+
+package "Core Logic" {
+    [Router] as router
+    [Library] as library
+    [Embeddings] as embeddings
+}
+
+package "External APIs" {
+    [OpenAI] as openai
+    [SentenceTransformers] as st
+}
+
+package "Storage" {
+    [Prompts] as prompts
+    [Config] as config
+}
+
+cli --> router : query
+router --> library : get prompts
+router --> embeddings : generate embeddings
+router --> openai : generate response
+library --> prompts : load data
+embeddings --> st : transform text
+router --> config : load settings
+
+@enduml
+

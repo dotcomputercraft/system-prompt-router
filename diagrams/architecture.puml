@@ -1,0 +1,95 @@
+@startuml System Prompt Router Architecture
+
+!theme plain
+skinparam backgroundColor #FFFFFF
+skinparam componentStyle rectangle
+
+title System Prompt Router - Application Architecture
+
+package "User Interface Layer" {
+    [CLI Interface] as CLI
+    [Configuration Manager] as Config
+}
+
+package "Core Application Layer" {
+    [System Prompt Router] as Router
+    [Prompt Library Manager] as Library
+    [Embedding Engine] as Embeddings
+    [Similarity Calculator] as Similarity
+}
+
+package "External Services" {
+    [OpenAI API] as OpenAI
+    [Sentence Transformers] as SentenceT
+}
+
+package "Data Layer" {
+    [Prompt Database] as PromptDB
+    [Configuration Files] as ConfigFiles
+    [Cache Storage] as Cache
+}
+
+package "Testing Framework" {
+    [Unit Tests] as UnitTests
+    [Integration Tests] as IntegrationTests
+    [Test Fixtures] as Fixtures
+}
+
+' User interactions
+User --> CLI : "Query Input"
+CLI --> Router : "Process Query"
+CLI --> Config : "Load Settings"
+
+' Core processing flow
+Router --> Library : "Get Available Prompts"
+Router --> Embeddings : "Generate Query Embedding"
+Router --> Similarity : "Calculate Similarities"
+Router --> OpenAI : "Generate Response"
+
+' Data dependencies
+Library --> PromptDB : "Load Prompts"
+Embeddings --> SentenceT : "Transform Text"
+Embeddings --> Cache : "Store/Retrieve Embeddings"
+Config --> ConfigFiles : "Read Configuration"
+
+' Testing relationships
+UnitTests --> Router : "Test Core Logic"
+UnitTests --> Library : "Test Prompt Management"
+UnitTests --> Embeddings : "Test Embedding Generation"
+IntegrationTests --> CLI : "Test End-to-End Flow"
+Fixtures --> PromptDB : "Test Data"
+
+note right of Router
+  Main orchestrator that:
+  - Receives user queries
+  - Finds best matching prompts
+  - Generates responses
+  - Manages the complete workflow
+end note
+
+note right of Embeddings
+  Handles all embedding operations:
+  - Query embedding generation
+  - Prompt description embeddings
+  - Caching for performance
+  - Model management
+end note
+
+note right of Similarity
+  Calculates semantic similarity:
+  - Cosine similarity computation
+  - Top-K prompt selection
+  - Ranking and scoring
+end note
+
+note bottom of PromptDB
+  Contains pre-built prompts:
+  - Code writing assistance
+  - Content creation
+  - Data analysis
+  - Legal assistance
+  - And more...
+end note
+
+@enduml
+

@@ -1,0 +1,29 @@
+# System Prompt Router Configuration
+
+# Embedding model configuration
+embedding_model: "all-MiniLM-L6-v2"  # Options: all-MiniLM-L6-v2, all-mpnet-base-v2, all-distilroberta-v1
+
+# OpenAI configuration
+openai_model: "gpt-3.5-turbo"  # Options: gpt-3.5-turbo, gpt-4, gpt-4-turbo
+# openai_api_key: "your-api-key-here"  # Set via environment variable instead
+# openai_api_base: null  # Optional custom API base URL
+
+# Similarity matching configuration
+similarity_threshold: 0.5  # Minimum similarity score to consider a match
+top_k_results: 3  # Number of top matches to return
+
+# Caching configuration
+cache_embeddings: true  # Whether to cache embeddings for performance
+cache_dir: ".cache"  # Directory for cache files
+
+# Logging configuration
+log_level: "INFO"  # Options: DEBUG, INFO, WARNING, ERROR
+
+# Response generation configuration
+max_tokens: 1000  # Maximum tokens for generated responses
+temperature: 0.7  # Temperature for response generation (0.0-2.0)
+
+# Performance tuning
+batch_size: 32  # Batch size for embedding computation
+max_sequence_length: 512  # Maximum sequence length for embeddings
+
